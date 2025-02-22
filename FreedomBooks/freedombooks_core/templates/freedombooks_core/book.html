@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<br><a href="/get_book/">Back</a><br>
+<nav>
+    <h1>{{ title|default:'error'|capfirst }}</h1>
+    <p>{{ post.title }}</p>
+    <p>{{ post.text.text }}</p>
+</nav>
+{% endblock %}

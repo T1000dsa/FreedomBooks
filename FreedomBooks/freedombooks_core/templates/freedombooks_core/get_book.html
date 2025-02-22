@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<nav>
+    <h1>{{ title|default:'error'|capfirst }}</h1>
+    {% for item in post %}
+        <br>{{ item.title }}
+        <br><a href="{{ item.get_absolute_url }}">Read the book</a><br>
+    {% endfor %}
+</nav>
+{% endblock %}

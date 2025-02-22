@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-8jruzx66-y5f-=sr1o3e%i!g7o7x&!$v6okyqlwcmoeq82(002
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'freedombooks_core.apps.FreedombooksCoreConfig'
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -54,7 +54,9 @@ ROOT_URLCONF = 'FreedomBooks.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,8 +77,13 @@ WSGI_APPLICATION = 'FreedomBooks.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'freedombooks_db',
+        'USER':'postgres',
+        'PASSWORD':'fdsgfh64wuyh9ptgu834590tu589-30qijtg0435ty345ty435',
+        'HOST':'127.0.0.1',
+        'PORT':'5432'
+
     }
 }
 
@@ -121,3 +128,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+if __name__ == "__main__":
+    print(BASE_DIR)

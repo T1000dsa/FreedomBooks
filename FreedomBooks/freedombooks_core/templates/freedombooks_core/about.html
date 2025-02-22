@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+<title>{{ title|default:'without title'|capfirst }}</title>
+{% block content %}
+<h1>{{ title|default:'Error!'|capfirst }}</h1>
+{{ description }}
+{% endblock %}

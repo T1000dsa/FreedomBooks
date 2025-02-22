@@ -15,10 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from freedombooks_core import views
 urlpatterns = [
-    path('', include('freedombooks_core.urls')),
+    path('', views.main_page, name='home_page'),
+    path('about_site/', views.about, name='about'),
+    path('sign_up/', views.sign_up, name='register'),
+    path('sign_in/', views.sign_in, name='autorise'),
+    path('add_book/', views.addbook, name='add'),
+    path('get_book/', views.get_book, name='get_book'),
+    path('get_book/<slug:book_slug>/', views.get_book_slug, name='get_by_slug'),
+    
 ]
 
-handler404 = views.page_not_found
