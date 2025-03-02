@@ -18,13 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from freedombooks_core import views
 urlpatterns = [
-    path('', views.main_page, name='home_page'),
+    path('', views.IndexHome.as_view(), name='home_page'),
     path('about_site/', views.about, name='about'),
     path('sign_up/', views.sign_up, name='register'),
     path('sign_in/', views.sign_in, name='autorise'),
-    path('add_book/', views.addbook, name='add'),
-    path('get_book/', views.get_book, name='get_book'),
-    path('get_book/<slug:book_slug>/', views.get_book_slug, name='get_by_slug'),
+    path('add_book/', views.AddBook.as_view(), name='add'),
+    path('get_book/', views.GetBook.as_view(), name='get_book'),
+    path('get_book/<slug:book_slug>/', views.GetBookSlug.as_view(), name='get_by_slug'),
     
 ]
 

@@ -2,10 +2,24 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, Http404
 from django.urls import reverse
 from django.template.loader import render_to_string
+from django.views import View
+from django.views.generic import TemplateView, ListView
+from freedombooks_core.forms import AddPostBook, UploadClassForm
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
+from .utils import DataMixin
+from freedombooks_core.models import BookModel, TagsModel, TextModel, UploadFiles
+# venv/Scripts/activate | deactivate; venv -> 1 | 0
+# pip install -U aiogram; -U when venv: 1 | -U if venv == True
+# git add <file> | git add .
+# git commit -m "disciption"
+# git push origin main
+# python3 -m venv venv
+# venv/Scripts/activate.bat
+# ./venv/Scripts/activate
+# virtualenv .env
+# git ls-files | xargs wc -l
+# python manage.py runserver -O port
 
-from freedombooks_core.models import BookModel, TagsModel, TextModel
-
-# temporary menu
 menu = [{'title':'about site', 'url_name':'about'}, 
         {'title':'sign in', 'url_name':'autorise'},
         {'title':'sign up', 'url_name':'register'},
@@ -13,18 +27,21 @@ menu = [{'title':'about site', 'url_name':'about'},
         {'title':'get book', 'url_name':'get_book'},
         ]
 
-def main_page(request:HttpRequest):
-    posts = {'row':range(8), 'column':range(16)}
-    data = {
-        'title':'Home',
-        'posts':posts,
-        'menu':menu
-    }
-    
-    return render(request, 'freedombooks_core/main_page.html', data)
-    
+class IndexHome(DataMixin, ListView):
+    model = BookModel
+    template_name = 'freedombooks_core/main_page.html'
+    title_page = 'home'
 
+    def get_queryset(self):
+        return BookModel.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        return self.get_mixin_context(
+            contex,
+            index_list=contex['object_list'])
 
+    
 def about(request:HttpRequest):
     descr = """
         Welcome to our book site! We're a team of passionate readers and writers who share a love for all things books. 
@@ -35,7 +52,7 @@ def about(request:HttpRequest):
     data = {
         'title':'about us',
         'menu':menu,
-        'description':descr
+        'description':descr,
     }
     return render(request, 'freedombooks_core/about.html', data)
 
@@ -58,41 +75,67 @@ def sign_up(request:HttpRequest):
     }
     return render(request, 'freedombooks_core/sign_page.html', data)
 
-def addbook(request:HttpRequest):
-    descr = 'this is a add page'
+
+class AddBook(View):
     data = {
         'title':'add book',
         'menu':menu,
-        'description':descr
-
+        'form':None
     }
-    return render(request, 'freedombooks_core/add_book.html', data)
-
-def get_book(request:HttpRequest):
-    posts = BookModel.objects.all()
-    descr = 'this is a get_book page'
-    data = {
-            'title':'get book',
-            'menu':menu,
-            'description':descr,
-            'post':posts
-        }
-
-    return render(request, 'freedombooks_core/get_book.html', data)
-
-def get_book_slug(request:HttpRequest, book_slug=None):
-    posts = BookModel.objects.get(slug=book_slug)
- 
-    descr = 'this is a get_book page'
-    data = {
-            'title':'get book',
-            'menu':menu,
-            'description':descr,
-            'post':posts
-        }
-
-    return render(request, 'freedombooks_core/book.html', data)
+    new_text = TextModel.objects
+    book_obj = BookModel.objects
+    def get(self, request:HttpRequest):
+        self.data['form'] = AddPostBook()
+        return render(request, 'freedombooks_core/add_book.html', self.data)
     
+    def post(self, request:HttpRequest):
+        form = AddPostBook(request.POST, request.FILES)
+        # Please fix this shity code here 25.02.2025
+        if form.is_valid():
+            form.save()
+            if form.cleaned_data.get('text_form'):
+                fp = UploadFiles(file=form.cleaned_data['text_form'])
+                fp.save()
+            
+            if fp.file.file:
+                with open(str(fp.file.file)) as filer:
+                    pki = self.new_text.create(text=filer.read())
+                    obj = self.book_obj.last()
+                    obj.text_hook = pki
+                    obj.save()
+        # Please fix this shity code here 25.02.2025
+        self.data['form'] = AddPostBook()
+        return render(request, 'freedombooks_core/add_book.html', self.data)
+
+class GetBook(DataMixin, ListView):
+    model = BookModel
+    template_name = 'freedombooks_core/get_book.html'
+    title_page = 'Choice the book!'
+
+    def get_queryset(self):
+        return BookModel.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        return self.get_mixin_context(
+            contex,
+            post=contex['bookmodel_list'],
+            description = 'this is a get_book page')
+    
+class GetBookSlug(DataMixin, ListView):
+    model = BookModel
+    template_name = 'freedombooks_core/book.html'
+    title_page = 'Good reading!'
+
+    def get_queryset(self):
+        return BookModel.objects.filter(slug=self.kwargs['book_slug'])
+    
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        data = contex['bookmodel_list'][0]
+        return self.get_mixin_context(contex, 
+                                      title=data.title,
+                                      post=data)
 
 
 def page_not_found(request:HttpRequest, exception):

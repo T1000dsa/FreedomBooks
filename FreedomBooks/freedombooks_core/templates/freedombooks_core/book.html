@@ -4,6 +4,6 @@
 <nav>
     <h1>{{ title|default:'error'|capfirst }}</h1>
     <p>{{ post.title }}</p>
-    <p>{{ post.text.text }}</p>
+    <p>{{ post.text_hook.text }}</p>
 </nav>
 {% endblock %}

@@ -2,23 +2,11 @@
 {% block content %}
 <h1 align="center">{{ title|default:'without title'|capfirst }}</h1>
 <p align="center" >There will be present books</p>
-<table border="1" align="center">
-    <tbody>
-        <tr>
-        {% for row in posts.row %}
-        <th>Header</th>
-        {% endfor %}
-        </tr>
-        {% for column in posts.column %}
-        <tr>
-            {% for row in posts.row %}
-            <td width:25%>row #{{ row }}<br> colum #{{ column }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% for item in index_list %}
+<a href="{{ item.get_absolute_url }}">{{ item.title }} </a><br>
+{% endfor %}
 {% for item in menu %}
     <a href="{% url item.url_name %}">{{ item.title|capfirst }}</a>
 {% endfor %}
+<a href="https://github.com/T1000dsa">My GitHub</a>
 {% endblock %}
