@@ -98,7 +98,7 @@ class AddBook(View):
                 fp.save()
             
             if fp.file.file:
-                with open(str(fp.file.file)) as filer:
+                with open(str(fp.file.file), encoding='utf-8') as filer:
                     pki = self.new_text.create(text=filer.read())
                     obj = self.book_obj.last()
                     obj.text_hook = pki
