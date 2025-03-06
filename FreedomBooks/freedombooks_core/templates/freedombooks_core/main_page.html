@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
+{% load cache %}
 {% block content %}
+
 <h1 align="center">{{ title|default:'without title'|capfirst }}</h1>
 <p align="center" >There will be present books</p>
 <p>Temporary view of the main page</p>
-{% for item in index_list %}
-<a href="{{ item.get_absolute_url }}">{{ item.title }} </a><br>
-{% endfor %}
-{% for item in menu %}
-    <a href="{% url item.url_name %}">{{ item.title|capfirst }}</a>
-{% endfor %}
-<a href="https://github.com/T1000dsa">My GitHub</a>
+
+
+{% if index_list %}
+    {% for item in index_list %}
+    <a href="{{ item.get_absolute_url }}">{{ item.title }} </a><br>
+    {% endfor %}
+{% endif %}
+
 {% include 'freedombooks_core/includes/paginator.html' %}
+
 {% endblock %}

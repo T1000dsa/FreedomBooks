@@ -17,17 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from freedombooks_core import views
-#from debug_toolbar.toolbar import debug_toolbar_urls
+from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf.urls.static import static
+from . import settings
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('freedombooks_core.urls')),
+    path('users/', include(('users.urls', 'users'), namespace='users'))
 
     # ... the rest of your URLconf goes here ... 
-]# + debug_toolbar_urls() 
+] + debug_toolbar_urls() 
 
+if settings.DEBUG:
+    urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 handler404 = views.page_not_found
+
 
 admin.site.site_header = 'special admin panel'
 admin.site.index_title = 'site administration'

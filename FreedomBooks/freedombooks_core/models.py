@@ -19,8 +19,17 @@ class BookModel(models.Model):
 
     objects = models.Manager()
 
+    class Meta:
+        ordering = ["id"]
+
     def get_absolute_url(self):
         return reverse('get_by_slug', kwargs={'book_slug':self.slug})
+    
+    def get_to_update(self):
+        return reverse('update', kwargs={'pk':self.pk})
+    
+    def get_to_delete(self):
+        return reverse('delete_book', kwargs={'pk':self.pk})
     
     def __str__(self):
         return self.title
@@ -30,8 +39,11 @@ class TagsModel(models.Model):# Many-to-many
     tags = models.CharField(max_length=128)
     slug = models.SlugField(max_length=256)
 
+    def __str__(self):
+        return self.tags
+
 class TextModel(models.Model):# One-to-one
     text = models.TextField(blank=True)
 
 class UploadFiles(models.Model):
-    file = models.FileField(upload_to='text_other')
+    file = models.FileField(upload_to='texts/%Y/%m/%d')

@@ -19,12 +19,14 @@ from django.urls import path
 from freedombooks_core import views
 urlpatterns = [
     path('', views.IndexHome.as_view(), name='home_page'),
-    path('about_site/', views.about, name='about'),
-    path('sign_up/', views.sign_up, name='register'),
-    path('sign_in/', views.sign_in, name='autorise'),
+    path('about_site/', views.AboutPage.as_view(), name='about'),
+    path('sign_up/', views.SignUpPage.as_view(), name='register'),
+    path('sign_in/', views.SignInPage.as_view(), name='autorise'),
     path('add_book/', views.AddBook.as_view(), name='add'),
-    path('get_book/', views.GetBook.as_view(), name='get_book'),
-    path('get_book/<slug:book_slug>/', views.GetBookSlug.as_view(), name='get_by_slug'),
+    path('get_books/', views.GetBooks.as_view(), name='get_books'),
+    path('change_book/<int:pk>/', views.UpdateBook.as_view(), name='update'),
+    path('get_book/<slug:book_slug>/', views.GetBook.as_view(), name='get_by_slug'),
+    path('delete_book/<int:pk>/', views.DeleteBook.as_view(), name='delete_book'),
     
 ]
 

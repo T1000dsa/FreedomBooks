@@ -26,6 +26,10 @@ SECRET_KEY = 'django-insecure-8jruzx66-y5f-=sr1o3e%i!g7o7x&!$v6okyqlwcmoeq82(002
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 
 
 # Application definition
@@ -37,17 +41,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'freedombooks_core.apps.FreedombooksCoreConfig'
+    'freedombooks_core.apps.FreedombooksCoreConfig',
+    "debug_toolbar",
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Cache
+    'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+
 ]
+
+CACHE_MIDDLEWARE_ALIAS  = 'default' # cache alias
+CACHE_MIDDLEWARE_SECONDS = 1 # number of seconds each page should be cached.
+#CACHE_MIDDLEWARE_KEY_PREFIX = ''  # name of site if multiple sites are used
 
 ROOT_URLCONF = 'FreedomBooks.urls'
 
@@ -130,5 +145,18 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-if __name__ == "__main__":
-    print(BASE_DIR)
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+LOGIN_REDIRECT_URL = 'home_page'
+LOGOUT_REDIRECT_URL = 'home_page'
+LOGIN_URL = 'users:login'

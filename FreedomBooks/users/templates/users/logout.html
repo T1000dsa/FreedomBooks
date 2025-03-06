@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<form style="display:inline-block" method="post" action="{% url 'users/logout.html' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button></form>
+    <li class="last">{{ user.username }}</li>
+{% endblock %}

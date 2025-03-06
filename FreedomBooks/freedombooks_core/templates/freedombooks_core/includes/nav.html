@@ -1,1 +1,8 @@
+{% load cache %}
 <a href="{% url 'home_page' %}">Home</a>
+{% cache 60 menu %}
+{% for item in menu %}
+    <a href="{% url item.url_name %}">{{ item.title|capfirst }}</a>
+{% endfor %}
+{% endcache %}
+<a href="https://github.com/T1000dsa">My GitHub</a>

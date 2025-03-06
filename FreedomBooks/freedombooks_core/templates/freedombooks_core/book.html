@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<br><a href="/get_book/">Back</a><br>
+<br><a href="/get_books/">Back</a><br>
 <nav>
-    <h1>{{ title|default:'error'|capfirst }}</h1>
-    <p>{{ post.title }}</p>
+    <p>
+    <a href="{{ post.get_to_update }}">Edit book</a>
+    <br><a href="{{ post.get_to_delete }}">Delete book</a>
+    </p>
+    <h1>{{ post.title }}</h1>
     <p>{{ post.text_hook.text }}</p>
 </nav>
 {% endblock %}
