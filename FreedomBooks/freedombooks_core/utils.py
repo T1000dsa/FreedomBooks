@@ -1,6 +1,6 @@
 menu = [{'title':'about site', 'url_name':'about'}, 
-        {'title':'sign in', 'url_name':'autorise'},
-        {'title':'sign up', 'url_name':'register'},
+        #{'title':'sign in', 'url_name':'autorise'},
+        #{'title':'sign up', 'url_name':'register'},
         {'title':'add book', 'url_name':'add'},
         {'title':'get book', 'url_name':'get_books'},
         ]

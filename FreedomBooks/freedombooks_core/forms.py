@@ -1,14 +1,13 @@
 from django import forms
-from freedombooks_core.models import BookModel, TagsModel, TextModel
+from freedombooks_core.models import BookModel, TagsModel
 from django.core.validators import MinLengthValidator
 from django.core.exceptions import ValidationError
 
 class AddPostBook(forms.ModelForm):
     #tag = forms.ModelChoiceField(queryset=TagsModel.objects.all(), empty_label='Tag not choiced', label='Tag')
-    text_form = forms.FileField(label='File', required=False)
     class Meta:
         model = BookModel
-        fields = ['title','slug', 'author', 'is_published', 'text_hook'] # '__all__'
+        fields = '__all__'
 
         widgets = {
             'title':forms.TextInput(attrs={'class':'form-input'}),
@@ -23,10 +22,8 @@ class AddPostBook(forms.ModelForm):
             return title
         
     def clean_data_text(self, id=None):
-        print(id, 'id')
         if id is not None:
-            self.cleaned_data['text_hook'] = id
-            text_hook = self.cleaned_data['text_hook']
+            text_hook = id
             return text_hook
         else:
             return

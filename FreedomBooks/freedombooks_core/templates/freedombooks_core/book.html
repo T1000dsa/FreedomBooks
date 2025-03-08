@@ -3,10 +3,15 @@
 <br><a href="/get_books/">Back</a><br>
 <nav>
     <p>
-    <a href="{{ post.get_to_update }}">Edit book</a>
-    <br><a href="{{ post.get_to_delete }}">Delete book</a>
+    {% if perms.freedombooks_core.book_update %}
+        <a href="{{ post.get_to_update }}">Edit book</a>
+    {% endif %}
+
+    {% if perms.freedombooks_core.delete_book %}
+        <br><a href="{{ post.get_to_delete }}">Delete book</a>
+    {% endif %}
     </p>
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.text_hook.text }}</p>
+    <h1>{{ title }}</h1>
+    <p>{{ content|default:'No text' }}</p>
 </nav>
 {% endblock %}

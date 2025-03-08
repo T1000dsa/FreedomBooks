@@ -20,9 +20,9 @@ from freedombooks_core import views
 urlpatterns = [
     path('', views.IndexHome.as_view(), name='home_page'),
     path('about_site/', views.AboutPage.as_view(), name='about'),
-    path('sign_up/', views.SignUpPage.as_view(), name='register'),
-    path('sign_in/', views.SignInPage.as_view(), name='autorise'),
-    path('add_book/', views.AddBook.as_view(), name='add'),
+    #path('sign_up/', views.SignUpPage.as_view(), name='register'),
+    #path('sign_in/', views.SignInPage.as_view(), name='autorise'),
+    path('add_book/', views.AddBookNew.as_view(), name='add'),
     path('get_books/', views.GetBooks.as_view(), name='get_books'),
     path('change_book/<int:pk>/', views.UpdateBook.as_view(), name='update'),
     path('get_book/<slug:book_slug>/', views.GetBook.as_view(), name='get_by_slug'),

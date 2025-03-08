@@ -7,8 +7,10 @@ from django.views.generic import TemplateView, ListView
 from freedombooks_core.forms import AddPostBook, UploadClassForm
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView, DeleteView
 from .utils import DataMixin
-from freedombooks_core.models import BookModel, TagsModel, TextModel, UploadFiles
+from freedombooks_core.models import BookModel, TagsModel
 from django.views.decorators.cache import cache_page
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from freedombooks_core.services import TextLoad
 # venv/Scripts/activate | deactivate; venv -> 1 | 0
 # pip install -U aiogram; -U when venv: 1 | -U if venv == True
 # git add <file> | git add .
@@ -22,8 +24,8 @@ from django.views.decorators.cache import cache_page
 # python manage.py runserver -O port
 
 menu = [{'title':'about site', 'url_name':'about'}, 
-        {'title':'sign in', 'url_name':'autorise'},
-        {'title':'sign up', 'url_name':'register'},
+        #{'title':'sign in', 'url_name':'autorise'},
+        #{'title':'sign up', 'url_name':'register'},
         {'title':'add book', 'url_name':'add'},
         {'title':'get book', 'url_name':'get_books'},
         ]
@@ -55,7 +57,7 @@ class AboutPage(DataMixin, TemplateView):
         return self.get_mixin_context(
             contex,
             description = self.descr)
-
+'''
 class SignInPage(DataMixin, TemplateView):
     template_name = 'freedombooks_core/sign_page.html'
     title_page = 'sign in'
@@ -77,46 +79,31 @@ class SignUpPage(DataMixin, TemplateView):
         return self.get_mixin_context(
             contex,
             description = self.descr)
+'''
 
+    
+class AddBookNew(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    form_class = AddPostBook
+    template_name = 'freedombooks_core/add_book.html'
+    permission_required = 'freedombooks_core.add'
+    
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        contex['title'] = 'adding'
+        return contex
+    
 
-class AddBook(View):
-    data = {
-        'title':'add book',
-        'menu':menu,
-        'form':None
-    }
-    new_text = TextModel.objects
-    book_obj = BookModel.objects
-    def get(self, request:HttpRequest):
-        self.data['form'] = AddPostBook()
-        return render(request, 'freedombooks_core/add_book.html', self.data)
-    
-    def post(self, request:HttpRequest):
-        form = AddPostBook(request.POST, request.FILES)
-        # Please fix this shity code here 25.02.2025
-        if form.is_valid():
-            form.save()
-            if form.cleaned_data.get('text_form'):
-                fp = UploadFiles(file=form.cleaned_data['text_form'])
-                fp.save()
-            
-            if fp.file.file:
-                with open(str(fp.file.file), encoding='utf-8') as filer:
-                    pki = self.new_text.create(text=filer.read())
-                    obj = self.book_obj.last()
-                    obj.text_hook = pki
-                    obj.save()
-        # Please fix this shity code here 25.02.2025
-        self.data['form'] = AddPostBook()
-        return render(request, 'freedombooks_core/add_book.html', self.data)
-    
-class UpdateBook(UpdateView):
+class UpdateBook(PermissionRequiredMixin, LoginRequiredMixin,  UpdateView):
     model = BookModel
     fields = "__all__"
     template_name = 'freedombooks_core/book_update.html'
     success_url = reverse_lazy('home_page')
-    title_page = 'editing'
-    #permission_required = 'main.change_worker'
+    permission_required = 'freedombooks_core.update'
+
+    def get_context_data(self, **kwargs):
+        contex = super().get_context_data(**kwargs)
+        contex['title'] = 'editing'
+        return contex
 
 
 class GetBooks(DataMixin, ListView):
@@ -145,14 +132,24 @@ class GetBook(DataMixin, ListView):
     def get_context_data(self, **kwargs):
         contex = super().get_context_data(**kwargs)
         data = contex['bookmodel_list'][0]
-        return self.get_mixin_context(contex, 
-                                      post=data)
+        text_view = 'No text'
 
-class DeleteBook(DeleteView):
+        if data.text_hook:
+            text_data = TextLoad(data)
+            text_view = text_data.push_text()
+            
+
+        return self.get_mixin_context(contex, 
+                                      title=data.title,
+                                      post=data,
+                                      content=text_view)
+
+class DeleteBook(PermissionRequiredMixin, LoginRequiredMixin, DeleteView):
     model = BookModel
     template_name = 'freedombooks_core/delete_page.html'
     context_object_name = 'post'
     success_url = reverse_lazy('home_page')
+    permission_required = 'freedombooks_core.delete_book'
     
     def get_context_data(self, **kwargs):
         contex = super().get_context_data(**kwargs)

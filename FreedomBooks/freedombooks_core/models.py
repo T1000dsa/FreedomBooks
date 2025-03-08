@@ -15,7 +15,7 @@ class BookModel(models.Model):
     is_published = models.BooleanField(default=False)
 
     tags = models.ManyToManyField('TagsModel', blank=True)
-    text_hook = models.OneToOneField('TextModel', blank=True,null=True, on_delete=models.SET_NULL)
+    text_hook = models.FileField(upload_to='texts/%Y/%m/%d', blank=True,null=True)
 
     objects = models.Manager()
 
@@ -41,9 +41,3 @@ class TagsModel(models.Model):# Many-to-many
 
     def __str__(self):
         return self.tags
-
-class TextModel(models.Model):# One-to-one
-    text = models.TextField(blank=True)
-
-class UploadFiles(models.Model):
-    file = models.FileField(upload_to='texts/%Y/%m/%d')
